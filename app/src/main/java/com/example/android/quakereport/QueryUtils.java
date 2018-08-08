@@ -6,9 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Helper methods related to requesting and receiving earthquake data from USGS.
@@ -48,10 +46,6 @@ public final class QueryUtils {
         // is formatted, a JSONException exception object will be thrown.
         // Catch the exception so the app doesn't crash, and print the error message to the logs.
         try {
-
-            // TODO: Parse the response given by the SAMPLE_JSON_RESPONSE string and
-            // build up a list of Earthquake objects with the corresponding data.
-
             JSONObject jsonRoot = new JSONObject(SAMPLE_JSON_RESPONSE);
             JSONArray featuresArray = jsonRoot.getJSONArray("features");
             for(int i = 0; i < featuresArray.length(); i++) {
@@ -60,12 +54,11 @@ public final class QueryUtils {
                 double mag = jsonEarthquake.optDouble("mag");
                 String location = jsonEarthquake.optString("place");
                 long time = jsonEarthquake.optLong("time");
-                Date date = new Date(time);
-                SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy hh:mm a");
-                String formatedDate = dateFormat.format(date);
+                String earthquakeURL = jsonEarthquake.optString("url");
 
 
-                Earthquake earthquakeData = new Earthquake(mag, location, formatedDate);
+
+                Earthquake earthquakeData = new Earthquake(mag, location, time, earthquakeURL);
                 earthquakes.add(earthquakeData);
 
             }

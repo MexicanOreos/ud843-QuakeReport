@@ -1,37 +1,28 @@
 package com.example.android.quakereport;
 
 public class Earthquake {
-    double magnitude;
-    String location, date;
+    private double magnitude;
+    private String location, url;
+    private long date;
 
     Earthquake() {
         magnitude = -1.0;
-        location = date = null;
+        location = null;
+        date = -1;
     }
 
-    Earthquake(double magnitude, String location, String date) {
+    Earthquake(double magnitude, String location, long date, String url) {
         this.magnitude = magnitude;
         this.location = location;
         this.date = date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public void setMagnitude(double magnitude) {
-        this.magnitude = magnitude;
+        this.url = url;
     }
 
     public double getMagnitude() {
         return magnitude;
     }
 
-    public String getDate() {
+    public long getDate() {
         return date;
     }
 
@@ -39,5 +30,8 @@ public class Earthquake {
         return location;
     }
 
+    public String getUrl() {
+        return url;
+    }
 
 }

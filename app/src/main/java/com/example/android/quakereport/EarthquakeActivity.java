@@ -15,34 +15,63 @@
  */
 package com.example.android.quakereport;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 
 public class EarthquakeActivity extends AppCompatActivity {
 
-    public static final String LOG_TAG = EarthquakeActivity.class.getName();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_list);
 
-        // Create a fake list of earthquake locations.
+        // Populates the arrayList of Earthquakes extracted from a JSON file.
         ArrayList<Earthquake> earthquakes = QueryUtils.extractEarthquakes();
 
         ListView earthquakeListView = (ListView) findViewById(R.id.earthquakeListView);
 
         // Create a new {@link ArrayAdapter} of earthquakes
-        EarthquakeAdapter earthquakeAdapter = new EarthquakeAdapter(this, earthquakes);
+        //It's final due to the OnItemClickListener
+        final EarthquakeAdapter earthquakeAdapter = new EarthquakeAdapter(this, earthquakes);
 
         // Set the adapter on the {@link ListView}
         // so the list can be populated in the user interface
         earthquakeListView.setAdapter(earthquakeAdapter);
+
+        /*
+        * The reason we are using a OnItemClickListener instead of a OnClickListener that we used in the Miwok/Spanish app is due to the nature of the app
+        * In the Miwok/Spanish app we had a main activity with explicitly stated and made textviews
+        * In this app, we have our main ListView begin populated by LinearLayouts that are using
+        * an adapter and a recycler. Using onClickListener would just make it so that when any portion
+        * of the screen is clicked, the app will just launch one intent, and there is also no way of knowing
+        * which earthquake was clicked.
+        *
+        * An OnItemClickListener is used in conjunction with a view that has an adapter. This lets us
+        * know which item (VIEW) in the adapter was clicked and from there we can get the relevant information.
+        *
+        * Since the adapter is pulling information from the ArrayList of earthquakes, we can get the
+        * earthquake from the ArrayList by referring to its position in the adapter. We use get item
+        * along with the int to get the position.
+        *
+        * Now with the earthquake object, we can get the URL that it contains, put that in an implicit
+        * intent and start an activity.
+        */
+        earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Earthquake currentEarthquake = earthquakeAdapter.getItem(i);
+                Uri earthquakeWebpage = Uri.parse(currentEarthquake.getUrl());
+                Intent webIntent = new Intent(Intent.ACTION_VIEW, earthquakeWebpage);
+                startActivity(webIntent);
+            }
+        });
 
     }
 }
